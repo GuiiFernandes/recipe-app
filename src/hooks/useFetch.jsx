@@ -58,7 +58,7 @@ const useFetch = () => {
 
   const initialFetch = async (pathname) => {
     const recipesData = pathname.includes('users')
-      ? await fetchUsersRecipes({ key: 'strPublic' })
+      ? await fetchUsersRecipes({ key: 'strPublic', value: 'true' })
       : await fetchRecipes(pathname);
 
     const categoriesData = await fetchRecipes(pathname, 'categoriesList', 'list');
