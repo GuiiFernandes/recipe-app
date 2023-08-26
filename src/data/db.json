@@ -11,6 +11,18 @@
       "inProgress": {},
       "score": 0,
       "createAt": "2023-08-26T21:55:25.505Z"
+    },
+    {
+      "id": "2d5204d7-03ea-4f95-b4fe-e66604f91159",
+      "email": "plisciliane@gmail.com",
+      "name": "Plisciliane Leal",
+      "password": "1234567",
+      "photo": "",
+      "dones": [],
+      "favorites": [],
+      "inProgress": {},
+      "score": 0,
+      "createAt": "2023-08-26T22:13:52.478Z"
     }
   ],
   "recipes": [
