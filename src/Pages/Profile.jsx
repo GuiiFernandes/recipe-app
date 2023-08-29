@@ -18,8 +18,8 @@ const NAME_LENGTH = 3;
 const PASSWORD_LENGTH = 7;
 
 function Profile() {
-  const { userLogged, setComments } = useContext(RecipesContext);
-  const { fetchRecipeComments, fetchUser, patchUser, fireToast } = useFetch();
+  const { userLogged } = useContext(RecipesContext);
+  const { fetchUser, patchUser, fireToast } = useFetch();
   const { validateCookie } = useUser();
   const [passwords, setPasswords] = useState(
     { lastPass: '', newPass: '', confirmPass: '', validLastPass: true },
@@ -42,14 +42,6 @@ function Profile() {
       setUser({ email, name, photo, acceptCookies });
     })();
   }, []);
-
-  useEffect(() => {
-    (async () => {
-      if (!userLogged) return;
-      const dataComments = await fetchRecipeComments('userId', user.id);
-      setComments(dataComments);
-    })();
-  }, [user]);
 
   const { name, email, photo, acceptCookies } = userLogged
   || { name: '', email: '', photo: '', acceptCookies: false };

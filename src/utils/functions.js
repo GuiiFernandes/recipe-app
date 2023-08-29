@@ -37,3 +37,14 @@ export const getId = (key) => {
 export const deleteCookie = (key) => {
   document.cookie = `${key}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
 };
+
+const ELEVEN = 11;
+
+export const getYoutubeEmbed = (url) => {
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+  const match = url.match(regExp);
+
+  return (match && match[2].length === ELEVEN)
+    ? `https://www.youtube.com/embed/${match[2]}`
+    : url;
+};

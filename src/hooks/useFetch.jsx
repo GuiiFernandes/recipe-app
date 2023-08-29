@@ -119,9 +119,11 @@ const useFetch = () => {
     }
   };
 
-  const checkUserExist = async (email) => {
+  const checkUserExist = async (email, id = null) => {
     const userResponse = await fetchUserEmail(email);
-    return !!userResponse.length;
+    console.log(id, userResponse[0].id);
+    return (id && userResponse.length)
+      ? id !== userResponse[0].id : !!userResponse.length;
   };
 
   const loginUser = async ({ email, password }) => {

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { getYoutubeEmbed } from '../utils/functions';
 
 const focus = 'peer-focus:-top-5 peer-focus:text-xs';
 const valid = 'peer-valid:-top-5 peer-valid:text-xs';
@@ -123,7 +124,7 @@ function InfosInputsRecipe({ infosRecipe, handleChange,
           <input
             className="peer reset-input input"
             id="youtubeRecipe"
-            value={ infosRecipe.strYoutube }
+            value={ getYoutubeEmbed(infosRecipe.strYoutube) }
             type="url"
             name="strYoutube"
             onChange={ ({ target }) => handleChange(target) }
@@ -134,7 +135,7 @@ function InfosInputsRecipe({ infosRecipe, handleChange,
             }
             htmlFor="youtubeRecipe"
           >
-            YouTube URL (use embed)
+            YouTube URL
           </label>
         </div>
       )}

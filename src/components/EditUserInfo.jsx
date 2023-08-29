@@ -23,7 +23,8 @@ export default function EditUserInfo({ setEmailRegister, user, setUser }) {
 
   const checkEmail = async (value) => {
     if (value !== email && validator.isEmail(value)) {
-      const emailExist = await checkUserExist(value);
+      const emailExist = await checkUserExist(value, userLogged.id);
+      console.log(emailExist);
       setEmailRegister(emailExist);
     }
   };
