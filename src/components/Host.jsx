@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-max-depth */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { AiFillGithub, AiFillLinkedin, AiOutlineLaptop } from 'react-icons/ai';
+import { AiFillGithub, AiFillLinkedin, AiFillHome } from 'react-icons/ai';
 
 function Host({ name, github, description, linkedin, image, port }) {
   return (
@@ -30,7 +30,7 @@ function Host({ name, github, description, linkedin, image, port }) {
                 {
                   port && (
                     <a href={ port } target="_blank" rel="noreferrer">
-                      <AiOutlineLaptop size={ 25 } className="text-[var(--orange)]" />
+                      <AiFillHome size={ 25 } className="text-[var(--orange)]" />
                     </a>
                   )
                 }
