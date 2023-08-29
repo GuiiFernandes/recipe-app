@@ -18,9 +18,9 @@ const headers = {
   'Content-Type': 'application/json',
 };
 
-const URL_USERS = `${process.env.REACT_APP_BASE_URL}/users`;
-const URL_COMMENTS = `${process.env.REACT_APP_BASE_URL}/comments`;
-const URL_RECIPES = `${process.env.REACT_APP_BASE_URL}/recipes`;
+const URL_USERS = `${process.env.REACT_APP_BASE_URL}users`;
+const URL_COMMENTS = `${process.env.REACT_APP_BASE_URL}comments`;
+const URL_RECIPES = `${process.env.REACT_APP_BASE_URL}recipes`;
 
 export const fetchAPI = async (pathname, optSearch, textSearch) => {
   const BASE_URL = pathname.includes('/meals')
