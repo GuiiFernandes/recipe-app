@@ -1,4 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
+import md5 from 'md5';
+// import { serverTimestamp } from 'firebase/firestore';
+// import { postFirebase, uploadImage } from './firebase';
+import { uploadImage } from './firebase';
 
 const keys = {
   ingredient: ['filter', 'i'],
@@ -34,7 +38,7 @@ export const fetchUserEmail = async (email, password) => {
   if (!password) {
     response = await fetch(`${URL_USERS}?email=${email}`);
   } else {
-    response = await fetch(`${URL_USERS}?email=${email}&password=${password}`);
+    response = await fetch(`${URL_USERS}?email=${email}&password=${md5(password)}`);
   }
   const data = await response.json();
   return data;
@@ -46,14 +50,46 @@ export const fetchUserId = async (id) => {
   return data;
 };
 
+export const fetchUsers = async () => {
+  const response = await fetch(URL_USERS);
+  const data = await response.json();
+  return data.map((user) => {
+    delete user.password;
+    return user;
+  });
+};
+
 export const fetchNewUser = async (user) => {
   const id = uuidv4();
+  let photo = '';
+  if (user.photo) {
+    photo = await uploadImage(id, user.photo);
+  }
+
+  // const data = {
+  //   id,
+  //   name: user.name,
+  //   email: user.email,
+  //   password: md5(user.password),
+  //   acceptCookies: user.acceptCookies,
+  //   photo,
+  //   dones: [],
+  //   favorites: [],
+  //   inProgress: {},
+  //   score: 0,
+  //   createAt: serverTimestamp(),
+  // };
+  // await postFirebase('users', id, data);
   await fetch(URL_USERS, {
     headers,
     method: 'POST',
     body: JSON.stringify({
       id,
-      ...user,
+      name: user.name,
+      email: user.email,
+      password: md5(user.password),
+      acceptCookies: user.acceptCookies,
+      photo,
       dones: [],
       favorites: [],
       inProgress: {},
@@ -74,6 +110,12 @@ export const fetchPatchUser = async (id, data) => {
 
 export const fetchRanking = async () => {
   const response = await fetch(`${URL_USERS}?_sort=score&_order=desc`);
+  const data = await response.json();
+  return data;
+};
+
+export const fetchAllComments = async () => {
+  const response = await fetch(URL_COMMENTS);
   const data = await response.json();
   return data;
 };
@@ -120,6 +162,22 @@ export const fetchUsersRecipes = async ({ id = null, key = null, value = null })
   response = id
     ? await fetch(`${URL_RECIPES}/${id}`)
     : await fetch(`${URL_RECIPES}?${key}=${value}`);
+  const data = await response.json();
+  return data;
+};
+
+const getQueryString = (params, values) => {
+  return params.reduce((query, param, index) => {
+    if (values[index]) {
+      return `${query}&${param}=${values[index]}`;
+    }
+    return query;
+  }, '');
+};
+
+export const fetchPublicRecipes = async (params, values) => {
+  const query = (params && values) ? getQueryString(params, values) : '';
+  const response = await fetch(`${URL_RECIPES}?strPublic=true${query}`);
   const data = await response.json();
   return data;
 };

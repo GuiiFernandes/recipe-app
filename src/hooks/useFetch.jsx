@@ -2,13 +2,15 @@ import { useContext } from 'react';
 import Swal from 'sweetalert2';
 
 import { fetchAPI, fetchComments, fetchNewUser, fetchPatchUser,
-  fetchUserEmail, fetchUserId, fetchUsersRecipes } from '../services/fetchAPI';
+  fetchPublicRecipes,
+  fetchUserEmail, fetchUserId, fetchUsers } from '../services/fetchAPI';
 import RecipesContext from '../context/RecipesContext';
 import { Toast, setCookie } from '../utils/functions';
+import { uploadImage } from '../services/firebase';
 
 const useFetch = () => {
-  const { setRecipes, setCategories, setLoading,
-    setError, error } = useContext(RecipesContext);
+  const { setRecipes, setCategories, setLoading, userLogged,
+    setError, error, setUserLogged } = useContext(RecipesContext);
   const MAX_RECIPES = 12;
   const MAX_CATEGORIES = 5;
 
@@ -50,6 +52,7 @@ const useFetch = () => {
       cancelButton: 'swal-cancel',
     },
   }).then((result) => {
+    console.log(params);
     if (result.isConfirmed) {
       fn(...params);
       fireToast('Deleted!', 'success');
@@ -57,8 +60,12 @@ const useFetch = () => {
   });
 
   const initialFetch = async (pathname) => {
+    const type = pathname.includes('/meals') ? 'meal' : 'drink';
     const recipesData = pathname.includes('users')
-      ? await fetchUsersRecipes({ key: 'strPublic', value: 'true' })
+      ? await fetchPublicRecipes(
+        ['strType', '_sort', '_order'],
+        [type, 'strCreateAt', 'desc'],
+      )
       : await fetchRecipes(pathname);
 
     const categoriesData = await fetchRecipes(pathname, 'categoriesList', 'list');
@@ -75,7 +82,7 @@ const useFetch = () => {
     try {
       setLoading(true);
       if (email) return await fetchUserEmail(email, password);
-      if (id !== null) return await fetchUserId(id);
+      if (id) return await fetchUserId(id);
       throw new Error('fetchUser needs at least one parameter (id or email');
     } catch ({ message }) {
       setError(message);
@@ -85,11 +92,24 @@ const useFetch = () => {
     }
   };
 
+  const fetchAllUsers = async () => {
+    try {
+      return await fetchUsers();
+    } catch ({ message }) {
+      setError(message);
+      return [];
+    }
+  };
+
   const postNewUser = async (newUser) => {
     try {
       setLoading(true);
       const id = await fetchNewUser(newUser);
-      setCookie('userLogged', id);
+      if (newUser.AcceptCookies) {
+        setCookie('userLogged', id);
+      } else {
+        sessionStorage.setItem('userLogged', id);
+      }
       return true;
     } catch ({ message }) {
       setError(message);
@@ -107,7 +127,11 @@ const useFetch = () => {
   const loginUser = async ({ email, password }) => {
     const userResponse = await fetchUserEmail(email, password);
     if (userResponse.length) {
-      setCookie('userLogged', userResponse[0].id);
+      if (userResponse[0].acceptCookies) {
+        setCookie('userLogged', userResponse[0].id);
+      } else {
+        sessionStorage.setItem('userLogged', userResponse[0].id);
+      }
       return true;
     }
     fireToast('Invalid email or password');
@@ -116,7 +140,12 @@ const useFetch = () => {
 
   const patchUser = async (id, data) => {
     try {
-      await fetchPatchUser(id, data);
+      const newData = { ...data };
+      if (data.photo instanceof Object) {
+        newData.photo = await uploadImage(id, data.photo);
+        setUserLogged({ ...userLogged, photo: newData.photo });
+      }
+      await fetchPatchUser(id, newData);
     } catch ({ message }) {
       setError(message);
       return [];
@@ -156,6 +185,7 @@ const useFetch = () => {
     fetchRecipeComments,
     sweetAlert,
     fetchCategories,
+    fetchAllUsers,
   };
 };
 

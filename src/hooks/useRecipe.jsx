@@ -1,12 +1,16 @@
 import { useContext } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
+import { uploadImage } from '../services/firebase';
 import RecipesContext from '../context/RecipesContext';
 import useFetch from './useFetch';
-import { fetchDeleteRecipe, fetchPostRecipe,
+import { fetchDeleteRecipe, fetchPatchRecipe, fetchPostRecipe,
+  fetchPublicRecipes,
   fetchUsersRecipes } from '../services/fetchAPI';
 
 const useRecipe = () => {
-  const { setError, userLogged, setRecipes, recipes } = useContext(RecipesContext);
+  const { setError, userLogged, setRecipes,
+    recipes, setLoading } = useContext(RecipesContext);
   const { fireToast } = useFetch();
 
   const formatedRecipe = (type, recipe) => {
@@ -15,7 +19,7 @@ const useRecipe = () => {
         strType: type.toLowerCase(),
         strMeal: '',
         strUserId: userLogged.id,
-        strCategory: 'Beefs',
+        strCategory: 'Beef',
         strArea: '',
         strInstructions: '',
         strMealThumb: '',
@@ -24,6 +28,7 @@ const useRecipe = () => {
         strYoutube: '',
         strIngredient1: '',
         strMeasure1: '',
+        strUuid: '',
       };
     }
     return recipe || {
@@ -38,12 +43,13 @@ const useRecipe = () => {
       strPublic: false,
       strIngredient1: '',
       strMeasure1: '',
+      strUuid: '',
     };
   };
 
-  const getAllUsersRecipe = async () => {
+  const getAllUsersRecipe = async (params = null, values = null) => {
     try {
-      const recipesData = await fetchUsersRecipes();
+      const recipesData = await fetchPublicRecipes(params, values);
       return recipesData;
     } catch ({ message }) {
       setError(message);
@@ -63,7 +69,13 @@ const useRecipe = () => {
 
   const postMyRecipe = async (obj) => {
     try {
-      await fetchPostRecipe(obj);
+      const strUuid = uuidv4();
+      const type = obj.strType === 'meal' ? 'Meal' : 'Drink';
+      let photo = '';
+      if (obj[`str${type}Thumb`]) {
+        photo = await uploadImage(strUuid, obj[`str${type}Thumb`], 'recipe');
+      }
+      await fetchPostRecipe({ ...obj, strUuid, [`str${type}Thumb`]: photo });
       fireToast('Recipe successfully added!', 'success');
       setRecipes((prev) => [...prev, obj]);
     } catch ({ message }) {
@@ -84,11 +96,32 @@ const useRecipe = () => {
 
   const patchRecipe = async (obj) => {
     try {
-      await fetchPostRecipe(obj);
+      const type = obj.strType === 'meal' ? 'Meal' : 'Drink';
+      const newObj = { ...obj };
+      if (obj[`str${type}Thumb`] instanceof Object) {
+        newObj[`str${type}Thumb`] = await uploadImage(
+          obj.strUuid,
+          obj[`str${type}Thumb`],
+          'recipe',
+        );
+      }
+      await fetchPatchRecipe(obj.id, newObj);
       fireToast('Recipe successfully edited!', 'success');
       setRecipes((prev) => prev.map((recipe) => (recipe.id === obj.id ? obj : recipe)));
     } catch ({ message }) {
       setError(message);
+    }
+  };
+
+  const fetchRecipe = async (obj) => {
+    try {
+      setLoading(true);
+      return await fetchUsersRecipes(obj);
+    } catch ({ message }) {
+      setError(message);
+      return [];
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -97,7 +130,8 @@ const useRecipe = () => {
     formatedRecipe,
     postMyRecipe,
     deleteRecipe,
-    patchRecipe };
+    patchRecipe,
+    fetchRecipe };
 };
 
 export default useRecipe;
