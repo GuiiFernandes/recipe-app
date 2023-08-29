@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.css": "/static/css/main.4a0848dd.css",
+    "main.js": "/static/js/main.40d42828.js",
+    "static/media/bg-login.png": "/static/media/bg-login.eb3283a99b70da92e4ec.png",
+    "static/media/kauan.jpeg": "/static/media/kauan.de97c37efc71c0746ad5.jpeg",
+    "static/media/imgNotFounded.png": "/static/media/imgNotFounded.e5d0892c3ad84ff16be3.png",
+    "static/media/guilherme.jpeg": "/static/media/guilherme.3854da359a6046c75fc3.jpeg",
+    "static/media/lucas.jpeg": "/static/media/lucas.1ac5a1c7115bab7da0b1.jpeg",
+    "static/media/shareIcon.svg": "/static/media/shareIcon.87def1bd1dff9af9263f046c3b9bd31a.svg",
+    "static/media/logo-recipes-app.svg": "/static/media/logo-recipes-app.07780db9a30d77cd7f87af45d1e84317.svg",
+    "static/media/name-recipes-app.svg": "/static/media/name-recipes-app.63fd4eb5a5e4a39529f7936560bbe9f1.svg",
+    "static/media/icon-foods.svg": "/static/media/icon-foods.d512d561a28494f54e3aaa842cbc7353.svg",
+    "static/media/icon-recipes-app.svg": "/static/media/icon-recipes-app.ff8138f6b6c3240554661da8734cca87.svg",
+    "index.html": "/index.html",
+    "static/media/icon-drinks.svg": "/static/media/icon-drinks.bfa060ecc404a01278bfdc443d9ffbbf.svg",
+    "main.4a0848dd.css.map": "/static/css/main.4a0848dd.css.map",
+    "main.40d42828.js.map": "/static/js/main.40d42828.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.4a0848dd.css",
+    "static/js/main.40d42828.js"
+  ]
+}

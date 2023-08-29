@@ -18,7 +18,6 @@ export default function Footer({ setCategorySelected = null }) {
     history.push(route);
   };
 
-
   return (
     <footer
       className="footer"
