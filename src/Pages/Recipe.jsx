@@ -1,7 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { IoChevronBackCircleSharp } from 'react-icons/io5';
+
 import RecipesContext from '../context/RecipesContext';
+import useRecipe from '../hooks/useRecipe';
 import useFetch from '../hooks/useFetch';
 import useUser from '../hooks/useUser';
 import ShareBtn from '../components/ShareBtn';
@@ -20,6 +22,7 @@ const INIT = 7;
 export default function Recipe() {
   const { loading, error, menuOpen } = useContext(RecipesContext);
   const { validateCookie, handleRemoveInProgress } = useUser();
+  const { fetchRecipe } = useRecipe();
   const { fetchRecipes } = useFetch();
   const history = useHistory();
   const { id } = useParams();
@@ -32,12 +35,15 @@ export default function Recipe() {
 
   const NAME_URL = `/${pathname.split('/')[1]}`;
   const KEY_BASE = pathname.split('/')[1] === 'meals' ? 'Meal' : 'Drink';
+  const inUsersRecipe = pathname.includes('users');
 
   useEffect(() => {
     (async () => {
       const isLogged = await validateCookie();
       if (!isLogged) return;
-      const [recipeData] = await fetchRecipes(NAME_URL, 'details', id);
+      const [recipeData] = inUsersRecipe
+        ? await fetchRecipe({ key: 'id', value: id })
+        : await fetchRecipes(NAME_URL, 'details', id);
       setRecipe(recipeData);
       if (!isInProgress) {
         const tooglePathName = NAME_URL === '/meals' ? '/drinks' : '/meals';
@@ -129,7 +135,7 @@ export default function Recipe() {
                 >
                   <iframe
                     className="iframe-youtube"
-                    src={ `https://www.youtube.com/embed/${recipe.strYoutube.split('=')[1]}` }
+                    src={ inUsersRecipe ? recipe.strYoutube : `https://www.youtube.com/embed/${recipe.strYoutube.split('=')[1]}` }
                     title="Recipe Video"
                   />
                 </div>

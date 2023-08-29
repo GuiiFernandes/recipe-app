@@ -60,6 +60,16 @@ export default function Menu({ showClose = false }) {
         <li>
           <Link
             className="option-menu"
+            to="/meals/users"
+            onClick={ () => setMenuOpen(false) }
+          >
+            <BiWorld className="border-2 border-solid rounded-[100%]" />
+            Users Recipes
+          </Link>
+        </li>
+        <li>
+          <Link
+            className="option-menu"
             to="/profile"
             onClick={ () => setMenuOpen(false) }
           >
@@ -75,16 +85,6 @@ export default function Menu({ showClose = false }) {
           >
             <MdOutlineEditNote className="border-2 border-solid rounded-[100%]" />
             My Recipes
-          </Link>
-        </li>
-        <li>
-          <Link
-            className="option-menu"
-            to="/meals/users"
-            onClick={ () => setMenuOpen(false) }
-          >
-            <BiWorld className="border-2 border-solid rounded-[100%]" />
-            Users Recipes
           </Link>
         </li>
         <li>
@@ -130,7 +130,7 @@ export default function Menu({ showClose = false }) {
         <li>
           <Link
             className="option-menu"
-            onClick={ logout }
+            onClick={ () => setMenuOpen(false) }
             to="/about"
           >
             <AiOutlineTeam className="border-2 border-solid rounded-[100%]" />

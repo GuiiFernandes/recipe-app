@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { MdOutlineDelete } from 'react-icons/md';
 import { AiOutlineEdit } from 'react-icons/ai';
 
+import { Link } from 'react-router-dom';
 import RecipesContext from '../context/RecipesContext';
 import useFetch from '../hooks/useFetch';
 import useRecipe from '../hooks/useRecipe';
@@ -18,20 +19,31 @@ function RecipeItem({ recipe, setNewRecipe }) {
   const type = strType === 'meal' ? 'Meal' : 'Drink';
   const tags = strTags ? strTags.split(',').splice(0, 2) : [];
 
+  console.log(recipe);
   return (
     <div className="border-grey container-ready p-0">
-      <div>
+      <Link to={ `/${strType}s/users/${id}` }>
         <img className="detail-img" src={ recipe[`str${type}Thumb`] } alt="RecipeIMG" />
-      </div>
+      </Link>
       <div className="lg:p-3 p-[0.7rem] w-[100%]">
         <div className="flex justify-between items-center">
-          <h4 className="title-done">{recipe[`str${type}`]}</h4>
+          <Link
+            to={ `/${strType}s/users/${id}` }
+            className="no-underline"
+          >
+            <h4 className="title-done">{recipe[`str${type}`]}</h4>
+          </Link>
         </div>
-        <p className="text-[var(--gray)] text-sm mb-1">
-          {strType === 'meal' ? `${strArea} - ${strCategory}` : strAlcoholic}
+        <p className="text-[var(--gray)] text-sm mb-0">
+          {strCategory}
+        </p>
+        <p className="text-[var(--gray)] text-sm mb-0">
+          {strType === 'meal'
+            ? strArea
+            : strAlcoholic}
         </p>
         <div className="justify-normal flex w-[100%]">
-          <p className="text-[var(--darkYellow)] text-xs sm:text-sm mb-3">
+          <p className="text-[var(--darkYellow)] text-xs sm:text-sm mb-1">
             Create In:
             {' '}
             <span
@@ -78,7 +90,10 @@ function RecipeItem({ recipe, setNewRecipe }) {
 
 RecipeItem.propTypes = {
   recipe: PropTypes.shape({
-    strMealThumb: PropTypes.string,
+    strMealThumb: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.object,
+    ]).isRequired,
     strMeal: PropTypes.string,
     strDrink: PropTypes.string,
     strType: PropTypes.string.isRequired,

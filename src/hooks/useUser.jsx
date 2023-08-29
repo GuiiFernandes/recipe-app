@@ -3,7 +3,7 @@ import { useHistory, useLocation, useParams } from 'react-router-dom';
 
 import RecipesContext from '../context/RecipesContext';
 import useFetch from './useFetch';
-import { deleteCookie, getCookie } from '../utils/functions';
+import { deleteCookie, getId } from '../utils/functions';
 
 const useUser = () => {
   const { fetchUser, patchUser } = useFetch();
@@ -14,7 +14,7 @@ const useUser = () => {
 
   const validateCookie = async () => {
     const unlogingPaths = ['/', '/remember-password', '/signup'];
-    const id = getCookie('userLogged');
+    const id = getId('userLogged');
     if (id) {
       if (!userLogged) {
         const user = await fetchUser({ id });
@@ -30,6 +30,7 @@ const useUser = () => {
 
   const logout = () => {
     deleteCookie('userLogged');
+    sessionStorage.removeItem('userLogged');
     setUserLogged(null);
     setMenuOpen(false);
   };
