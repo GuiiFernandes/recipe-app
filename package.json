@@ -6,6 +6,7 @@
     "node": "16 || 18"
   },
   "dependencies": {
+    "@emailjs/browser": "^3.11.0",
     "bootstrap": "^5.2.3",
     "clipboard-copy": "^4.0.1",
     "firebase": "^10.2.0",
@@ -26,6 +27,7 @@
     "cy": "env CY_CLI=true cypress run",
     "cy:open": "cypress open --e2e --browser chrome",
     "start": "env ESLINT_NO_DEV_ERRORS=true react-scripts start",
+    "debug": "env $(cat .env) npm start",
     "server": "node ./server.js",
     "dev": "concurrently \"npm run server\" \"npm start\"",
     "build": "react-scripts build",

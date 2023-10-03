@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import Swal from 'sweetalert2';
 
+import md5 from 'md5';
 import { fetchAPI, fetchComments, fetchNewUser, fetchPatchUser,
   fetchPublicRecipes,
   fetchUserEmail, fetchUserId, fetchUsers } from '../services/fetchAPI';
@@ -143,6 +144,9 @@ const useFetch = () => {
   const patchUser = async (id, data) => {
     try {
       const newData = { ...data };
+      if (newData.password) {
+        newData.password = md5(newData.password);
+      }
       if (data.photo instanceof Object) {
         newData.photo = await uploadImage(id, data.photo);
         setUserLogged({ ...userLogged, photo: newData.photo });

@@ -42,6 +42,7 @@ function App() {
       <Route path="/in-progress-recipes" component={ RecipesInProgress } />
       <Route path="/my-recipes" component={ MyRecipes } />
       <Route path="/about" component={ About } />
+      <Route path="/recover-pass/:hash" component={ NotFound } />
       <Route path="*" component={ NotFound } />
     </Switch>
   );

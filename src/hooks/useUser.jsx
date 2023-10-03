@@ -133,13 +133,24 @@ const useUser = () => {
     setUserLogged({ ...userLogged, dones: [formatedRecipe, ...filteredDones], score });
   };
 
-  return { validateCookie,
+  const updatePassword = async (email, { current, newPass }) => {
+    const user = fetchUser({ email, password: current });
+    if (user.length) {
+      await patchUser(id, { password: newPass });
+      return true;
+    }
+  };
+
+  return {
+    validateCookie,
     changeFavorite,
     saveProgress,
     handleRemoveInProgress,
     setUserProgress,
     addInDoneRecipes,
-    logout };
+    logout,
+    updatePassword,
+  };
 };
 
 export default useUser;

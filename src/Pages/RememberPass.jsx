@@ -1,8 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import validator from 'validator';
 import { Link } from 'react-router-dom';
 import { IoChevronBackCircleSharp } from 'react-icons/io5';
+import emailjs from '@emailjs/browser';
 
+import md5 from 'md5';
 import InitialLayout from '../components/InitialLayout';
 import useFetch from '../hooks/useFetch';
 import useUser from '../hooks/useUser';
@@ -61,8 +64,24 @@ export default function RememberPass() {
         setPassword('Valid email, but name does not match registered. Please try again');
         setIndexBtn(0);
       } else {
-        setPassword('Recovery email sent, check your inbox and');
-        setIndexBtn(1);
+        const params = {
+          toName: user.name,
+          email: user.email,
+          link: `${process.env.REACT_APP_HOST}/recover-pass/${md5(user.email)}`,
+        };
+        emailjs.send(
+          process.env.REACT_APP_EMAILJS_SERVICE_ID,
+          process.env.REACT_APP_EMAILJS_TEMPLATE_ID,
+          params,
+          process.env.REACT_APP_EMAILJS_KEY,
+        ).then((response) => {
+          console.log(response.status, response.text);
+          setPassword('Recovery email sent, check your inbox and');
+          setIndexBtn(1);
+        }, (err) => {
+          setPassword('Error sending email, please try again', err);
+          setIndexBtn(0);
+        });
       }
     } else {
       setPassword('Email not registered. Please,');
@@ -132,9 +151,10 @@ export default function RememberPass() {
               className="password-remember"
             >
               {password}
-              <p className="m-1 font-bold">
+              <br />
+              <span className="m-1 font-bold">
                 {buttons[indexBtn]}
-              </p>
+              </span>
             </p>
           </div>
 
