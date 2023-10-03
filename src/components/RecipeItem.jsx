@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { MdOutlineDelete } from 'react-icons/md';
 import { AiOutlineEdit } from 'react-icons/ai';
+import { GiHotMeal } from 'react-icons/gi';
 
 import { Link } from 'react-router-dom';
 import RecipesContext from '../context/RecipesContext';
@@ -19,11 +20,14 @@ function RecipeItem({ recipe, setNewRecipe }) {
   const type = strType === 'meal' ? 'Meal' : 'Drink';
   const tags = strTags ? strTags.split(',').splice(0, 2) : [];
 
-  console.log(recipe);
   return (
     <div className="border-grey container-ready p-0">
       <Link to={ `/${strType}s/users/${id}` }>
-        <img className="detail-img" src={ recipe[`str${type}Thumb`] } alt="RecipeIMG" />
+        { recipe[`str${type}Thumb`] ? (
+          <img className="detail-img" src={ recipe[`str${type}Thumb`] } alt="RecipeIMG" />
+        ) : (
+          <GiHotMeal className="detail-img" size="120px" color="var(--darkYellow)" />
+        )}
       </Link>
       <div className="lg:p-3 p-[0.7rem] w-[100%]">
         <div className="flex justify-between items-center">

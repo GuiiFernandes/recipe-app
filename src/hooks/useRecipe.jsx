@@ -76,8 +76,11 @@ const useRecipe = () => {
         photo = await uploadImage(strUuid, obj[`str${type}Thumb`], 'recipe');
       }
       await fetchPostRecipe({ ...obj, strUuid, [`str${type}Thumb`]: photo });
+      const userRecipes = await fetchUsersRecipes({
+        key: 'strUserId', value: obj.strUserId,
+      });
       fireToast('Recipe successfully added!', 'success');
-      setRecipes((prev) => [...prev, obj]);
+      setRecipes(userRecipes);
     } catch ({ message }) {
       setError(message);
     }
