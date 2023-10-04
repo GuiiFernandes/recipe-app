@@ -16,6 +16,7 @@ import MyRecipes from './Pages/MyRecipes';
 import './App.css';
 import About from './Pages/About';
 import RecipesUsers from './Pages/RecipesUsers';
+import RecoverPass from './Pages/RecoverPass';
 
 function App() {
   return (
@@ -42,7 +43,7 @@ function App() {
       <Route path="/in-progress-recipes" component={ RecipesInProgress } />
       <Route path="/my-recipes" component={ MyRecipes } />
       <Route path="/about" component={ About } />
-      <Route path="/recover-pass/:hash" component={ NotFound } />
+      <Route path="/recover-pass/:hash" component={ RecoverPass } />
       <Route path="*" component={ NotFound } />
     </Switch>
   );

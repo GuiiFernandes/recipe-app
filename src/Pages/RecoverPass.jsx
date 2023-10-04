@@ -1,8 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory, useParams } from 'react-router-dom';
+import md5 from 'md5';
 import { BsEye, BsEyeSlash } from 'react-icons/bs';
+import { IoChevronBackCircleSharp } from 'react-icons/io5';
 
+import useFetch from '../hooks/useFetch';
+import useUser from '../hooks/useUser';
 import InitialLayout from '../components/InitialLayout';
 import img from '../images/imgNotFounded.png';
 import './NotFound.css';
@@ -11,18 +15,16 @@ const PASSWORD_LENGTH = 7;
 
 export default function RecoverPass() {
   const [passwords, setPasswords] = useState({
-    current: '',
     newPass: '',
     confirm: '',
   });
   const [viewPasswords, setViewPasswords] = useState({
-    current: false,
     newPass: false,
     confirm: false,
   });
-  const [userEmail, setUserEmail] = useState('');
+  const [userId, setUserId] = useState('');
   const { hash } = useParams();
-  const { fireToast } = useFetch();
+  const { fireToast, fetchAllUsers } = useFetch();
   const { updatePassword } = useUser();
   const history = useHistory();
 
@@ -32,9 +34,9 @@ export default function RecoverPass() {
       const userIndex = allUsers.findIndex((user) => (
         md5(user.email) === hash
       ));
-      setUserEmail(allUsers[userIndex].email);
+      setUserId(allUsers[userIndex].id);
       if (userIndex < 0) {
-        setUserEmail('invalid');
+        setUserId('invalid');
       }
     })();
   }, []);
@@ -44,13 +46,9 @@ export default function RecoverPass() {
   };
 
   const handleSubmit = async () => {
-    const result = await updatePassword(userEmail, passwords);
-    if (result) {
-      fireToast('Password updated successfully!', 'success');
-      history.push('/');
-    } else {
-      fireToast('Invalid password', 'error');
-    }
+    await updatePassword(userId, passwords.newPass);
+    fireToast('Password updated successfully!', 'success');
+    history.push('/');
   };
 
   const focus = 'peer-focus:-top-5 peer-focus:text-xs';
@@ -60,7 +58,7 @@ export default function RecoverPass() {
   const classBtnDisabled = 'disabled:cursor-not-allowed disabled:text-[#CF5927]';
   const classBtn = `${classBtnMain} ${classBtbHover} ${classBtnDisabled}`;
 
-  if (userEmail === 'invalid') {
+  if (userId === 'invalid') {
     return (
       <div
         className="flex justify-center items-center my-auto
@@ -85,10 +83,10 @@ export default function RecoverPass() {
           className="no-underline text-[var(--yellow)] hover:text-[var(--darkYellow)]"
           to="/"
         >
-          Go to Login
+          <IoChevronBackCircleSharp size="40px" />
         </Link>
         <h1 className="text-[var(--green)] font-bold text-5xl tracking-widest m-0">
-          UPDATE PASSWORD
+          PASSWORD
         </h1>
       </div>
       <form
@@ -98,38 +96,6 @@ export default function RecoverPass() {
           handleSubmit();
         } }
       >
-        <div className="flex-center relative w-full">
-          <div className="user-box">
-            <input
-              className="peer reset-input input"
-              id="current"
-              name="current"
-              value={ passwords.current }
-              type={ viewPasswords.current ? 'text' : 'password' }
-              data-testid="password-input"
-              onChange={ ({ target }) => handleChange(target) }
-              required
-            />
-            <label
-              className={ `label ${focus} ${passwords.current.length ? valid : ''}` }
-              htmlFor="current"
-            >
-              Current Password
-            </label>
-          </div>
-          <button
-            type="button"
-            className="flex-center viewpass-btn"
-            onClick={ () => setViewPasswords(!viewPasswords.current) }
-          >
-            { viewPasswords.current ? (
-              <BsEyeSlash />
-            ) : (
-              <BsEye />
-            )}
-          </button>
-        </div>
-
         <div className="flex-center relative w-full">
           <div className="user-box">
             <input
@@ -199,8 +165,7 @@ export default function RecoverPass() {
           type="submit"
           data-testid="login-submit-btn"
           disabled={ !(
-            passwords.current.length >= PASSWORD_LENGTH
-            && passwords.newPass.length >= PASSWORD_LENGTH
+            passwords.newPass.length >= PASSWORD_LENGTH
             && passwords.confirm.length >= PASSWORD_LENGTH
             && passwords.newPass === passwords.confirm
           ) }

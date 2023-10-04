@@ -133,12 +133,8 @@ const useUser = () => {
     setUserLogged({ ...userLogged, dones: [formatedRecipe, ...filteredDones], score });
   };
 
-  const updatePassword = async (email, { current, newPass }) => {
-    const user = fetchUser({ email, password: current });
-    if (user.length) {
-      await patchUser(id, { password: newPass });
-      return true;
-    }
+  const updatePassword = async (id, password) => {
+    await patchUser(id, { password });
   };
 
   return {
